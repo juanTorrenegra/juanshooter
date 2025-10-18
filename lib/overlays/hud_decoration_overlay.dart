@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:juanshooter/game.dart';
 
+// ESTE WIDGET SOLO DIBUJA 4 ESQUINAS !!!!!!!!!!!!!!!!!!!!
 class HudDecorationOverlay extends StatelessWidget {
   const HudDecorationOverlay({required this.game, super.key});
   final MyGame game;

@@ -18,17 +18,17 @@ class VisorOverlay extends StatelessWidget {
       color: Colors.transparent, // Fondo completamente transparente
       child: Stack(
         children: [
-          Positioned.fill(
-            child: Container(
-              color: const Color(0xAA000000), //Fondo negro semi-transparente
-            ),
-          ),
+          //Positioned.fill( //Fondo negro semi-transparente
+          //  child: Container(
+          //    color: const Color(0xAA000000),
+          //  ),
+          //),
           Positioned.fill(
             child: ClipRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(
                   sigmaX: 5.0,
-                  sigmaY: 5.0, // Intensidad del blur
+                  sigmaY: 10.0, // Intensidad del blur
                 ),
                 child: Container(
                   color: Colors

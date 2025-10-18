@@ -21,33 +21,44 @@ class HealthBar extends PositionComponent {
   void render(Canvas canvas) {
     super.render(canvas);
 
-    // Fondo de la barra (gris)
-    final backgroundRect = Rect.fromLTWH(0, 0, width, height);
-    final backgroundPaint = Paint()..color = Colors.grey.withAlpha(150);
-    canvas.drawRect(backgroundRect, backgroundPaint);
+    final borderRadius = height / 2;
 
-    // Barra de vida actual (verde)
+    // Fondo de la barra con bordes redondos
+    final backgroundRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 0, width, height),
+      Radius.circular(borderRadius),
+    );
+    final backgroundPaint = Paint()..color = Colors.red.withAlpha(150);
+    canvas.drawRRect(backgroundRect, backgroundPaint);
+
+    // Barra de vida actual con bordes redondos
     final healthPercentage = currentHealth / maxHealth;
     final healthWidth = width * healthPercentage;
-    final healthRect = Rect.fromLTWH(0, 0, healthWidth, height);
 
-    final healthPaint = Paint()
-      ..color = _getHealthColor(healthPercentage)
-      ..style = PaintingStyle.fill;
+    if (healthWidth > 0) {
+      final healthRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, healthWidth, height),
+        Radius.circular(borderRadius),
+      );
 
-    canvas.drawRect(healthRect, healthPaint);
+      final healthPaint = Paint()
+        ..color = _getHealthColor(healthPercentage)
+        ..style = PaintingStyle.fill;
 
-    // Borde de la barra
-    final borderPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+      canvas.drawRRect(healthRect, healthPaint);
 
-    canvas.drawRect(backgroundRect, borderPaint);
+      // Borde de la barra
+      final borderPaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2;
+
+      canvas.drawRRect(backgroundRect, borderPaint);
+    }
   }
 
   Color _getHealthColor(double percentage) {
-    if (percentage > 0.6) return Colors.green;
+    if (percentage > 0.6) return Colors.cyanAccent;
     if (percentage > 0.3) return Colors.orange;
     return Colors.red;
   }
@@ -67,13 +78,25 @@ class GameHud extends PositionComponent with HasGameReference<MyGame> {
   late final CustomPainterComponent hudVisor;
   late final HealthBar healthBar;
 
+  late final TextComponent shipsDestroyedText;
+
   @override
   Future<void> onLoad() async {
+    shipsDestroyedText = TextComponent(
+      text: 'Score 0',
+      textRenderer: TextPaint(
+        style: TextStyle(
+          color: Colors.cyanAccent,
+          fontSize: 44,
+          fontFamily: "ava",
+        ),
+      ),
+    );
     movementJoystick = JoystickComponent(
       knob: CircleComponent(
         radius: 30,
         paint: Paint()
-          ..color = Colors.red.withAlpha(150)
+          ..color = Colors.red.withAlpha(350)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 0.3,
       ),
@@ -162,8 +185,13 @@ class GameHud extends PositionComponent with HasGameReference<MyGame> {
     add(shootButton);
     add(fastButton);
     add(healthBar);
+    add(shipsDestroyedText);
 
     _positionComponents();
+  }
+
+  void updateShipsDestroyed(int count) {
+    shipsDestroyedText.text = 'Score $count';
   }
 
   void updateHealthBar(int currentHealth, int maxHealth) {
@@ -200,6 +228,10 @@ class GameHud extends PositionComponent with HasGameReference<MyGame> {
       menu.position = Vector2(game.size.x / 2 - 15, game.size.y - 60);
 
       healthBar.position = Vector2((game.size.x - healthBar.width) / 2, 20);
+      shipsDestroyedText.position = Vector2(
+        fastButton.position.x + 40, // Al lado derecho del fastButton
+        fastButton.position.y - 5, // Un poco arriba para centrar verticalmente
+      );
     }
   }
 }

@@ -35,6 +35,14 @@ class MyGame extends FlameGame
   late AudioPool pool;
   double timeScale = 1.0;
 
+  int shipsDestroyed = 0;
+
+  void incrementShipsDestroyed() {
+    shipsDestroyed++;
+    // Actualizar el HUD si existe
+    hud.updateShipsDestroyed(shipsDestroyed);
+  }
+
   void fast() {
     // Llama al método del player
     player.toggleFastMode(!player.isFastMode); // Alternar estado
